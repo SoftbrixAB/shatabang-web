@@ -9,7 +9,6 @@ const Router = EmberRouter.extend({
 });
 
 Router.map(function() {
-  this.route('faces');
   this.route('login');
   this.route('upload');
   this.route('admin');
