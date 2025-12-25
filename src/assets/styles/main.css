@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #app {
+    @apply h-full w-full m-0 p-0;
+  }
+
+  body {
+    @apply font-sans antialiased;
+  }
+}
+
+@layer components {
+  .dropzone {
+    @apply max-h-[80%] h-[650px] border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center;
+  }
+
+  .fullscreen-overlay {
+    @apply fixed inset-0 bg-black z-[1000] flex items-center justify-center;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white px-4 py-2 rounded hover:opacity-90 transition-opacity;
+  }
+
+  .media-item {
+    @apply relative inline-block m-1;
+  }
+
+  .media-item-icon {
+    @apply absolute z-[5] mx-0.5;
+  }
+}
