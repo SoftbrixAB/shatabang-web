@@ -31,17 +31,28 @@
       </router-link>
     </div>
 
-    <!-- Gallery placeholder -->
-    <div v-else class="gallery-placeholder border-2 border-dashed border-gray-300 rounded-lg p-8">
+    <!-- Gallery -->
+    <SimpleGallery
+      v-else
+      :image-width-style="imageWidth.imageWidthStyle.value"
+      @media-click="handleMediaClick"
+    />
+
+    <!-- Fullscreen viewer placeholder -->
+    <div
+      v-if="activeMedia"
+      class="fullscreen-overlay"
+      @click="closeFullscreen"
+    >
       <div class="text-center">
-        <p class="text-gray-700 text-lg mb-2">
-          Media loaded: {{ mediaStore.mediaCount }} items
-        </p>
-        <p class="text-gray-500 text-sm mb-1">
-          {{ mediaStore.folders.length }} folders ({{ mediaStore.folders.join(', ') }})
-        </p>
-        <p class="text-gray-400 text-xs">
-          Gallery components coming in Phase 4
+        <p class="text-white text-xl mb-4">{{ activeMedia.fileName }}</p>
+        <img
+          :src="activeMedia.bigMedia"
+          :alt="activeMedia.fileName"
+          class="max-w-full max-h-screen"
+        />
+        <p class="text-white text-sm mt-4">
+          Click anywhere to close (Full viewer in Phase 5)
         </p>
       </div>
     </div>
@@ -49,14 +60,25 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useMediaStore } from '@/stores/mediaStore'
 import { useImageWidth } from '@/composables/useImageWidth'
+import SimpleGallery from '@/components/gallery/SimpleGallery.vue'
+import type { Media } from '@/types/media'
 
 const mediaStore = useMediaStore()
 const imageWidth = useImageWidth()
+const activeMedia = ref<Media | null>(null)
 
 const { zoomIn, zoomOut } = imageWidth
+
+function handleMediaClick(media: Media) {
+  activeMedia.value = media
+}
+
+function closeFullscreen() {
+  activeMedia.value = null
+}
 
 // Initialize media store on mount
 onMounted(async () => {
