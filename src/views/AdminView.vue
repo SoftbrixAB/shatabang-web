@@ -4,7 +4,7 @@
 
     <div class="grid gap-4 max-w-2xl">
       <!-- Server Info -->
-      <div class="bg-white rounded-lg shadow p-4">
+      <div class="card">
         <h2 class="text-lg font-semibold mb-2">Server Information</h2>
         <div class="text-sm text-gray-600">
           <p>Version: <span class="font-mono">{{ serverVersion }}</span></p>
@@ -12,7 +12,7 @@
       </div>
 
       <!-- Cache Management -->
-      <div class="bg-white rounded-lg shadow p-4">
+      <div class="card">
         <h2 class="text-lg font-semibold mb-3">Image Fingerprint Cache</h2>
         <p class="text-sm text-gray-600 mb-4">
           Rebuild the image fingerprint index to update the media database.
@@ -27,7 +27,7 @@
       </div>
 
       <!-- Queue Management -->
-      <div class="bg-white rounded-lg shadow p-4">
+      <div class="card">
         <h2 class="text-lg font-semibold mb-3">Queue Management</h2>
         <p class="text-sm text-gray-600 mb-4">
           Monitor and manage background job queues.
@@ -35,7 +35,7 @@
         <a
           href="/arena"
           target="_blank"
-          class="inline-block px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+          class="btn-secondary inline-block"
         >
           Open Arena Queue Dashboard
         </a>

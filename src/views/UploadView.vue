@@ -24,7 +24,7 @@
         </div>
 
         <!-- Upload stats -->
-        <div v-if="uploadStats.total > 0" class="mt-4 bg-white rounded-lg shadow p-4">
+        <div v-if="uploadStats.total > 0" class="mt-4 card">
           <h3 class="text-sm font-semibold mb-2">Upload Summary</h3>
           <div class="grid grid-cols-3 gap-2 text-sm">
             <div>
@@ -52,7 +52,7 @@
         />
 
         <!-- Overall progress bar -->
-        <div v-if="isUploading" class="mt-4 bg-white rounded-lg shadow p-4">
+        <div v-if="isUploading" class="mt-4 card">
           <div class="flex justify-between mb-2">
             <span class="text-sm text-gray-600">
               Uploading {{ uploadStore.currentlySending }} of {{ allFiles.length }} files...

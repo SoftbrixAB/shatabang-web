@@ -7,10 +7,10 @@
         <button @click="scrollToToday" class="btn-primary">
           Today
         </button>
-        <button @click="scrollToStart" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+        <button @click="scrollToStart" class="btn-secondary">
           Start
         </button>
-        <button @click="scrollToEnd" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+        <button @click="scrollToEnd" class="btn-secondary">
           End
         </button>
       </div>
