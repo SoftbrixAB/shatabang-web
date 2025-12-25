@@ -29,6 +29,9 @@
       <!-- Queue Management -->
       <div class="bg-white rounded-lg shadow p-4">
         <h2 class="text-lg font-semibold mb-3">Queue Management</h2>
+        <p class="text-sm text-gray-600 mb-4">
+          Monitor and manage background job queues.
+        </p>
         <a
           href="/arena"
           target="_blank"
@@ -38,10 +41,17 @@
         </a>
       </div>
 
-      <!-- Admin functionality placeholder -->
-      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p class="text-sm text-blue-700">
-          Full admin functionality coming in Phase 7
+      <!-- Status Messages -->
+      <div v-if="statusMessage"
+           :class="[
+             'border rounded-lg p-4',
+             statusType === 'success' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+           ]">
+        <p :class="[
+             'text-sm',
+             statusType === 'success' ? 'text-green-700' : 'text-red-700'
+           ]">
+          {{ statusMessage }}
         </p>
       </div>
     </div>
@@ -54,6 +64,8 @@ import api from '@/services/api'
 
 const serverVersion = ref('Loading...')
 const rebuilding = ref(false)
+const statusMessage = ref('')
+const statusType = ref<'success' | 'error'>('success')
 
 onMounted(async () => {
   try {
@@ -68,11 +80,15 @@ async function rebuildCache() {
   if (rebuilding.value) return
 
   rebuilding.value = true
+  statusMessage.value = ''
+
   try {
     await api.post('/api/images/rebuild')
-    alert('Cache rebuild started successfully')
+    statusType.value = 'success'
+    statusMessage.value = 'Cache rebuild started successfully. The process may take several minutes to complete in the background.'
   } catch (error) {
-    alert('Failed to rebuild cache: ' + error)
+    statusType.value = 'error'
+    statusMessage.value = `Failed to rebuild cache: ${error instanceof Error ? error.message : 'Unknown error'}`
   } finally {
     rebuilding.value = false
   }
