@@ -38,24 +38,11 @@
       @media-click="handleMediaClick"
     />
 
-    <!-- Fullscreen viewer placeholder -->
-    <div
-      v-if="activeMedia"
-      class="fullscreen-overlay"
-      @click="closeFullscreen"
-    >
-      <div class="text-center">
-        <p class="text-white text-xl mb-4">{{ activeMedia.fileName }}</p>
-        <img
-          :src="activeMedia.bigMedia"
-          :alt="activeMedia.fileName"
-          class="max-w-full max-h-screen"
-        />
-        <p class="text-white text-sm mt-4">
-          Click anywhere to close (Full viewer in Phase 5)
-        </p>
-      </div>
-    </div>
+    <!-- Fullscreen viewer -->
+    <FullsizeMedia
+      :active-media="activeMedia"
+      @close="closeFullscreen"
+    />
   </div>
 </template>
 
@@ -64,6 +51,7 @@ import { ref, onMounted } from 'vue'
 import { useMediaStore } from '@/stores/mediaStore'
 import { useImageWidth } from '@/composables/useImageWidth'
 import SimpleGallery from '@/components/gallery/SimpleGallery.vue'
+import FullsizeMedia from '@/components/fullsize/FullsizeMedia.vue'
 import type { Media } from '@/types/media'
 
 const mediaStore = useMediaStore()
