@@ -51,14 +51,14 @@ import type { Media } from '@/types/media'
 
 const mediaStore = useMediaStore()
 const scrollContainer = ref<HTMLDivElement | null>(null)
-const activeMedia = ref<Media | null>(null)
+const activeMedia = ref<Media | undefined>(undefined)
 
 function handleMediaClick(media: Media) {
   activeMedia.value = media
 }
 
 function closeFullscreen() {
-  activeMedia.value = null
+  activeMedia.value = undefined
 }
 
 function scrollToToday() {

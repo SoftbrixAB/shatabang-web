@@ -192,7 +192,7 @@ async function startUpload() {
 }
 
 // Prevent navigation during upload
-onBeforeRouteLeave((to, from, next) => {
+onBeforeRouteLeave((_to, _from, next) => {
   if (isUploading.value) {
     const answer = confirm('Upload in progress. Are you sure you want to leave?')
     if (answer) {

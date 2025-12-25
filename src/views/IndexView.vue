@@ -56,7 +56,7 @@ import type { Media } from '@/types/media'
 
 const mediaStore = useMediaStore()
 const imageWidth = useImageWidth()
-const activeMedia = ref<Media | null>(null)
+const activeMedia = ref<Media | undefined>(undefined)
 
 const { zoomIn, zoomOut } = imageWidth
 
@@ -65,7 +65,7 @@ function handleMediaClick(media: Media) {
 }
 
 function closeFullscreen() {
-  activeMedia.value = null
+  activeMedia.value = undefined
 }
 
 // Initialize media store on mount

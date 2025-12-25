@@ -20,7 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await api.get('/api/users/me')
       user.value = response.data
-      return user.value
+      return user.value!
     } catch (err) {
       console.error('Failed to load user:', err)
       error.value = err instanceof Error ? err.message : 'Failed to load user'

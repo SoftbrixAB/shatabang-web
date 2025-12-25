@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import MediaGalleryItem from './MediaGalleryItem.vue'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import { useMediaStore } from '@/stores/mediaStore'

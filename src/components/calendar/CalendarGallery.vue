@@ -57,7 +57,7 @@ function updateTimeIndicator() {
   nowX.value = (dayNumber - 1 + timeFraction) * CALENDAR_BLOCK_WIDTH
 }
 
-function getYearMedia(year: string): Media[] {
+function getYearMedia(_year: string): Media[] {
   // Filter media for this specific year from the tree
   // For now, return empty array - would need to traverse tree
   // This is a placeholder - actual implementation would query the tree

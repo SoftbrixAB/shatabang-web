@@ -1,26 +1,26 @@
-# Shatabang Client (Vue 3)
+# Shatabang Client
 
-A media gallery application for managing photos and videos, rebuilt from Ember to Vue 3.
+A modern media gallery application for managing and viewing photos and videos with an intuitive interface.
 
 ## Features
 
 - **Gallery View**: Infinite scroll gallery with date-based organization
-- **Calendar Timeline**: Visual timeline showing media by year and date
-- **Fullscreen Viewer**: Keyboard navigation, image preloading, delete functionality
-- **File Upload**: Drag-and-drop with file examination before uploading
-- **Admin Panel**: Cache management and server monitoring
-- **Authentication**: Google OAuth + session management
+- **Calendar Timeline**: Interactive SVG timeline showing media by year and date
+- **Fullscreen Viewer**: Keyboard navigation (←/→/ESC/Delete), image preloading, smooth transitions
+- **File Upload**: Drag-and-drop interface with file examination before uploading
+- **Admin Panel**: Cache management and background job monitoring
+- **Authentication**: Secure Google OAuth with session management
 
 ## Tech Stack
 
-- **Framework**: Vue 3.4 with Composition API (`<script setup>`)
-- **Build Tool**: Vite 5.4
-- **Language**: TypeScript 5.3 (strict mode)
-- **Router**: Vue Router 4.2 (hash-based routing)
-- **State Management**: Pinia 2.1
-- **Styling**: Tailwind CSS 3.4
-- **Testing**: Vitest 1.6 + @vue/test-utils
-- **HTTP Client**: Axios
+- **Framework**: Vue 3.4 with Composition API
+- **Build Tool**: Vite 5.4 (fast HMR, optimized builds)
+- **Language**: TypeScript 5.3 (strict mode, full type safety)
+- **Router**: Vue Router 4.2 with hash-based routing
+- **State Management**: Pinia 2.1 stores + composables pattern
+- **Styling**: Tailwind CSS 3.4 utility-first approach
+- **Testing**: Vitest 1.6 + @vue/test-utils (73 passing tests)
+- **HTTP Client**: Axios with interceptors
 
 ## Project Structure
 
@@ -32,22 +32,35 @@ src/
 │   ├── fullsize/            # FullsizeMedia, FullsizeImage, FullsizeVideo
 │   ├── calendar/            # CalendarGallery, CalendarDateAxis, CalendarYearRow
 │   └── upload/              # FileDropzone, FileList
-├── composables/             # Reusable logic (useInfiniteScroll, useKeyboardNav, etc.)
-├── stores/                  # Pinia stores (mediaStore, authStore, uploadStore)
-├── router/                  # Vue Router + auth guards
-├── services/                # API client, dibba-tree wrapper
-├── utils/                   # Date utilities, media utilities
-├── types/                   # TypeScript definitions
+├── composables/             # Reusable logic hooks
+│   ├── useInfiniteScroll.ts
+│   ├── useKeyboardNav.ts
+│   ├── useFullscreen.ts
+│   └── ...
+├── stores/                  # Pinia state management
+│   ├── mediaStore.ts        # Media data with dibba-tree integration
+│   ├── authStore.ts         # Authentication & user session
+│   └── uploadStore.ts       # Upload progress tracking
+├── router/                  # Vue Router configuration
+│   ├── index.ts
+│   └── guards.ts            # Authentication guards
+├── services/                # API & external integrations
+│   ├── api.ts               # Axios HTTP client
+│   └── dibba-tree.ts        # Date hierarchy wrapper
+├── utils/                   # Helper utilities
+│   ├── dateUtils.ts         # Date/calendar calculations
+│   └── mediaUtils.ts        # File parsing
+├── types/                   # TypeScript type definitions
 ├── views/                   # Route components
-└── assets/styles/           # Tailwind CSS + global styles
+└── assets/styles/           # Tailwind + custom CSS
 ```
 
 ## Development
 
 ### Prerequisites
 
-- Node.js 18+
-- Backend API running (for media and authentication)
+- **Node.js** 18 or higher
+- **Backend API** running (provides `/api`, `/media`, `/images`, `/video` endpoints)
 
 ### Setup
 
@@ -55,22 +68,24 @@ src/
 # Install dependencies
 npm install
 
-# Start development server
+# Start development server (http://localhost:5173)
 npm run dev
 ```
 
-The dev server will start at `http://localhost:5173` with:
-- API proxy to backend at `/api`, `/media`, `/images`, `/video`
-- Hot module replacement (HMR)
+The dev server includes:
+- Hot Module Replacement (HMR) for instant updates
+- API proxy to backend
+- Source maps for debugging
+- TypeScript type checking
 
 ### Testing
 
 ```bash
-# Run tests
+# Run tests in watch mode
 npm test
 
-# Run tests in watch mode
-npm run test
+# Run tests once
+npm test -- --run
 
 # Run tests with UI
 npm run test:ui
@@ -79,111 +94,154 @@ npm run test:ui
 npm run test:coverage
 ```
 
-**Test Coverage**: 73 tests across 9 test files
+**Test Coverage**: 73 tests across 9 files
+- Components: FileDropzone, FileList, FullsizeImage, FullsizeVideo, MediaGalleryItem
 - Stores: authStore, uploadStore
 - Composables: useImageWidth
-- Components: MediaGalleryItem, FileDropzone, FileList, FullsizeImage, FullsizeVideo
+
+### Type Checking
+
+```bash
+# Run TypeScript type checker
+npm run type-check
+```
 
 ### Building for Production
 
 ```bash
-# Build for production
+# Build with type checking
 npm run build
 
-# Preview production build
+# Preview production build locally
 npm run preview
 ```
 
-Build output goes to `dist/` directory:
-- `dist/index.html` - Entry point
-- `dist/assets/` - JS/CSS bundles with content hashing
+**Build Output** (`dist/` directory):
+- `index.html` - Entry point
+- `assets/` - Versioned JS/CSS bundles
 - Code splitting: vendor chunk, dibba-tree chunk, route-based chunks
 
-## Configuration
-
-### Environment Variables
-
-Create a `.env` file:
-
-```bash
-VITE_API_BASE_URL=http://localhost:3000
-VITE_GOOGLE_CLIENT_ID=your_google_client_id
-```
-
-### Vite Config
-
-Key configurations in `vite.config.ts`:
-- API proxy configuration
-- Path alias (`@/` → `src/`)
-- Code splitting strategy
-- Build optimizations
-
-### Tailwind Config
-
-Custom theme in `tailwind.config.js`:
-- Calendar block width: 180px
-- Z-index layers
-- Custom components: `.btn-primary`, `.btn-secondary`, `.card`
-- Utilities: `.scrollbar-hide`
-
-## Migration from Ember
-
-This application was migrated from Ember 3.10 to Vue 3.4. Key architectural changes:
-
-### State Management
-- **Before**: Ember services + controllers
-- **After**: Pinia stores + composables
-
-### Component Architecture
-- **Before**: Ember components with classic patterns
-- **After**: Vue 3 Composition API with `<script setup>`
-
-### Styling
-- **Before**: LESS + Bootstrap 3
-- **After**: Tailwind CSS utility-first approach
-
-### Data Layer
-- **Before**: Ember Data models
-- **After**: TypeScript interfaces + dibba-tree library
-
-### Testing
-- **Before**: QUnit
-- **After**: Vitest + @vue/test-utils
-
-## Known Issues
-
-### vue-tsc Type Checker
-
-The `vue-tsc` type checker has a compatibility issue and is excluded from the default build command. TypeScript type checking still works in the IDE and during development.
-
-To attempt type checking manually:
-```bash
-npm run type-check
-```
-
-### dibba-tree Library
-
-Using v0.9.5 of dibba-tree (untyped library). A TypeScript wrapper is provided in `src/services/dibba-tree.ts`.
-
-## Performance
-
-### Optimization Strategies
-- Route-based code splitting
-- Image lazy loading with `loading="lazy"`
-- Infinite scroll with batch loading (64 items)
-- Image preloading for fullscreen viewer
-- Virtual scrolling (can be added if needed)
-
-### Bundle Sizes (gzipped)
+**Bundle Sizes (gzipped)**:
 - Main bundle: ~17.65 KB
 - Vendor chunk: ~36.18 KB
 - dibba-tree: ~1.62 KB
 - Route chunks: 1-4 KB each
 
+## Configuration
+
+### Environment Variables
+
+Create a `.env` file in the project root:
+
+```bash
+VITE_API_BASE_URL=http://localhost:3000
+VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id
+```
+
+### Vite Configuration
+
+Key settings in `vite.config.ts`:
+- **API Proxy**: Routes `/api`, `/media`, `/images`, `/video` to backend
+- **Path Alias**: `@/` maps to `src/` for clean imports
+- **Code Splitting**: Vendor and dibba-tree chunks
+- **Build Optimizations**: Minification, tree-shaking
+
+### Tailwind Configuration
+
+Custom theme in `tailwind.config.js`:
+- **Calendar**: 180px block width
+- **Z-Index**: Layered system for overlays
+- **Components**: `.btn-primary`, `.btn-secondary`, `.card`
+- **Utilities**: `.scrollbar-hide`
+
+## Architecture
+
+### State Management (Pinia)
+
+**mediaStore.ts**
+- Loads media from backend folders
+- Organizes media in dibba-tree (date hierarchy)
+- Provides iterators for navigation
+- Progressive loading: first year immediately, rest in background
+
+**authStore.ts**
+- User authentication state
+- Google OAuth flow management
+- Session persistence
+- Route guard integration
+
+**uploadStore.ts**
+- Track upload progress per file
+- Calculate upload speed
+- Maintain upload statistics
+
+### Composables (Reusable Logic)
+
+**useInfiniteScroll**
+- Pagination with dibba-tree iterator
+- Batch loading (64 items)
+- Scroll event optimization with RAF
+
+**useKeyboardNav**
+- Fullscreen viewer controls
+- Arrow keys, ESC, Delete
+- Event listener cleanup
+
+**useFullscreen**
+- Fullscreen API wrapper
+- Cross-browser compatibility
+- State management
+
+**useImageWidth**
+- Gallery zoom controls
+- Responsive image sizing
+- Zoom in/out functionality
+
+### Components
+
+19 Vue components using `<script setup>` syntax:
+- **Gallery**: SimpleGallery, MediaGalleryItem
+- **Calendar**: CalendarGallery, CalendarDateAxis, CalendarYearAxis, CalendarYearRow
+- **Fullscreen**: FullsizeMedia, FullsizeImage, FullsizeVideo
+- **Upload**: FileDropzone, FileList
+- **Common**: NavigationBar, UserInfo
+
+## Performance Optimizations
+
+- **Route-based code splitting**: Lazy load views
+- **Image lazy loading**: Native `loading="lazy"` attribute
+- **Infinite scroll**: Batch loading prevents UI freezes
+- **Image preloading**: Preload next/prev images in fullscreen
+- **RequestAnimationFrame**: Optimized scroll handling
+- **Vite build**: Tree-shaking, minification, chunk optimization
+
 ## Browser Support
 
-- Modern browsers with ES2015+ support
-- Chrome, Firefox, Safari, Edge (latest versions)
+- Chrome, Edge, Firefox, Safari (latest versions)
+- ES2015+ support required
+- Modern browsers with Proxy support
+
+## Known Considerations
+
+### dibba-tree Library
+
+Using v0.9.5 of the untyped dibba-tree library for date-based media organization. A TypeScript wrapper provides type safety in `src/services/dibba-tree.ts`.
+
+## Development Workflow
+
+1. **Start dev server**: `npm run dev`
+2. **Make changes**: HMR updates instantly
+3. **Run tests**: `npm test` (watch mode)
+4. **Type check**: `npm run type-check`
+5. **Build**: `npm run build`
+6. **Preview**: `npm run preview`
+
+## Deployment
+
+1. **Build**: `npm run build` generates optimized `dist/` folder
+2. **Server**: Serve static files with SPA fallback to `index.html`
+3. **Backend**: No changes needed - uses existing API endpoints
+4. **Environment**: Configure `VITE_API_BASE_URL` and `VITE_GOOGLE_CLIENT_ID`
 
 ## License
 
@@ -191,4 +249,4 @@ Private
 
 ## Version
 
-v0.5.0 - Vue 3 Migration Complete
+v0.5.0
