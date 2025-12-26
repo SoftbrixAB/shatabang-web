@@ -155,7 +155,7 @@ function moveLeft() {
 
   if (direction === 'prev' && iterator.value.hasPrev()) {
     const prev = iterator.value.prev()
-    if (prev !== currentMedia.value) {
+    if (prev && prev !== currentMedia.value) {
       currentMedia.value = prev
       currentMedia.value.path = iterator.value.getPath()
       preloadImages()
@@ -163,7 +163,7 @@ function moveLeft() {
     }
   } else if (direction === 'next' && iterator.value.hasNext()) {
     const next = iterator.value.next()
-    if (next !== currentMedia.value) {
+    if (next && next !== currentMedia.value) {
       currentMedia.value = next
       currentMedia.value.path = iterator.value.getPath()
       preloadImages()
@@ -179,7 +179,7 @@ function moveRight() {
 
   if (direction === 'next' && iterator.value.hasNext()) {
     const next = iterator.value.next()
-    if (next !== currentMedia.value) {
+    if (next && next !== currentMedia.value) {
       currentMedia.value = next
       currentMedia.value.path = iterator.value.getPath()
       preloadImages()
@@ -187,7 +187,7 @@ function moveRight() {
     }
   } else if (direction === 'prev' && iterator.value.hasPrev()) {
     const prev = iterator.value.prev()
-    if (prev !== currentMedia.value) {
+    if (prev && prev !== currentMedia.value) {
       currentMedia.value = prev
       currentMedia.value.path = iterator.value.getPath()
       preloadImages()

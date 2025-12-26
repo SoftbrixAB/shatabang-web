@@ -27,9 +27,11 @@ export function useInfiniteScroll<T>(
 
       for (let i = 0; i < batchSize && iterator.hasPrev(); i++) {
         const item = iterator.prev()
-        // Store the path in the item
-        ;(item as any).path = iterator.getPath()
-        newItems.push(item)
+        if (item) {
+          // Store the path in the item
+          ;(item as any).path = iterator.getPath()
+          newItems.push(item)
+        }
       }
 
       hasMore.value = iterator.hasPrev()
