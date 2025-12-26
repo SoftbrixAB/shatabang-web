@@ -82,6 +82,6 @@ watch(() => props.fromDate, (newDate) => {
 .gallery-grid {
   font-size: 0; /* Remove whitespace between inline-block elements */
   line-height: 0;
-  margin: -2px; /* Compensate for item margins */
+  width: 100%;
 }
 </style>

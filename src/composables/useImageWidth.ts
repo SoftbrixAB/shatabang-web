@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 
 export function useImageWidth() {
-  const imagesPWidth = ref(1) // Percentage width (1 = 100%, 2 = 50%, 4 = 25%, etc.)
+  const imagesPWidth = ref(4) // Percentage width (1 = 100%, 2 = 50%, 4 = 25%, etc.)
 
   const imageWidth = computed(() => {
     return `${100 / imagesPWidth.value}%`

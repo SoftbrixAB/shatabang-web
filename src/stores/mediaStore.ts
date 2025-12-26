@@ -63,21 +63,53 @@ export const useMediaStore = defineStore('media', () => {
   async function loadImageList(folder: string) {
     try {
       folders.value.push(folder)
-      const response = await api.get(`./images/info/${folder}/media.lst`)
-      const imageList = response.data as string
-      const images = imageList.split(',')
 
-      console.log(`Loaded ${images.length} images from folder ${folder}`)
+      // Try the new API format first (mock server and potentially new backend)
+      try {
+        const response = await api.get(`./api/dirs/${folder}`)
+        const mediaItems = response.data as Media[]
 
-      if (folder !== 'import') {
-        importImages(images)
+        console.log(`Loaded ${mediaItems.length} media items from folder ${folder}`)
+
+        if (folder !== 'import' && mediaItems.length > 0) {
+          importMediaItems(mediaItems)
+        }
+
+        return mediaItems.length
+      } catch (apiError) {
+        // Fall back to old format (media.lst file)
+        const response = await api.get(`./images/info/${folder}/media.lst`)
+        const imageList = response.data as string
+        const images = imageList.split(',')
+
+        console.log(`Loaded ${images.length} images from folder ${folder}`)
+
+        if (folder !== 'import') {
+          importImages(images)
+        }
+
+        return images.length
       }
-
-      return images.length
     } catch (error) {
       console.error(`Failed to load image list for folder ${folder}:`, error)
       return 0
     }
+  }
+
+  function importMediaItems(mediaItems: Media[]) {
+    mediaItems.forEach((media) => {
+      const date = new Date(media.date)
+
+      const y = date.getFullYear()
+      const m = date.getMonth() + 1 // Month is 0-indexed, dibba-tree expects 1-indexed
+      const d = date.getDate()
+      const hh = date.getHours()
+      const mm = date.getMinutes()
+      const ss = date.getSeconds()
+      const id = parseInt(media.fileName.split('_')[1]) || 0
+
+      tree.value.update(media, y, m, d, hh, mm, ss, id)
+    })
   }
 
   function importImages(images: string[]) {

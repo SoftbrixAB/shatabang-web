@@ -58,6 +58,7 @@ function handleClick() {
 .media-item {
   display: inline-block;
   vertical-align: top;
-  margin: 2px;
+  padding: 2px;
+  box-sizing: border-box;
 }
 </style>
