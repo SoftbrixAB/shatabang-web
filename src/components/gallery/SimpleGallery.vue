@@ -54,13 +54,20 @@ const mediaStore = useMediaStore()
 const iterator = ref(mediaStore.getIteratorReverse())
 
 // Use infinite scroll composable
-const { items, hasMore, loading } = useInfiniteScroll<Media>(iterator.value, {
+const { items, hasMore, loading, loadMore } = useInfiniteScroll<Media>(iterator.value, {
   batchSize: 64,
   threshold: 300
 })
 
+// Expose loadMore so parent components can trigger loading
+defineExpose({
+  loadMore,
+  loadedCount: () => items.value.length
+})
+
 // Handle media click
 function handleMediaClick(media: Media) {
+  console.log('SimpleGallery: media clicked, emitting mediaClick:', media)
   emit('mediaClick', media)
 }
 

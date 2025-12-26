@@ -84,11 +84,13 @@ import FullsizeVideo from './FullsizeVideo.vue'
 interface Props {
   activeMedia?: Media
   reverseMove?: boolean
+  onLoadMore?: () => void
 }
 
 const props = withDefaults(defineProps<Props>(), {
   activeMedia: undefined,
-  reverseMove: false
+  reverseMove: false,
+  onLoadMore: undefined
 })
 
 const emit = defineEmits<{
@@ -103,6 +105,7 @@ const iterator = ref<DibbaIterator<Media> | null>(null)
 const hideInteractiveOverlay = ref(false)
 const currentIndex = ref(0)
 const totalCount = computed(() => mediaStore.mediaCount)
+const lastDirection = ref<'next' | 'prev' | null>(null)
 
 const hasPrev = computed(() => iterator.value?.hasPrev() ?? false)
 const hasNext = computed(() => iterator.value?.hasNext() ?? false)
@@ -117,35 +120,44 @@ useKeyboardNav({
 
 // Watch for activeMedia changes
 watch(() => props.activeMedia, (media) => {
+  console.log('FullsizeMedia: activeMedia changed to:', media)
   if (media) {
     if (!iterator.value) {
       // Initialize iterator
       iterator.value = mediaStore.getIterator()
+      console.log('FullsizeMedia: iterator initialized, media.path:', media.path)
       if (media.path) {
         iterator.value.gotoPath(media.path)
       }
       currentMedia.value = media
+      console.log('FullsizeMedia: currentMedia set to:', currentMedia.value)
 
-      // Update history
-      history.pushState(media, '', `#view=${media.bigMedia}`)
+      // Calculate approximate index based on date (newer = lower index since newest first)
+      // This is a rough estimate, will be updated incrementally during navigation
+      const totalItems = mediaStore.mediaCount
+      const mediaDate = new Date(media.date)
+      const now = new Date()
+      const oldestDate = new Date(now.getFullYear() - 10, 0, 1) // Assume 10 years of photos
+      const dateRange = now.getTime() - oldestDate.getTime()
+      const itemAge = now.getTime() - mediaDate.getTime()
+      currentIndex.value = Math.floor((itemAge / dateRange) * totalItems)
+      currentIndex.value = Math.max(0, Math.min(totalItems - 1, currentIndex.value))
+
+      // Update history (pass null as state since media object is not serializable)
+      history.pushState(null, '', `#view=${media.bigMedia}`)
 
       // Preload adjacent images
       preloadImages()
-      updateIndex()
     } else {
       currentMedia.value = media
-      history.replaceState(media, '', `#view=${media.bigMedia}`)
+      history.replaceState(null, '', `#view=${media.bigMedia}`)
       preloadImages()
-      updateIndex()
     }
   }
 }, { immediate: true })
 
 function updateIndex() {
-  if (iterator.value && currentMedia.value) {
-    // Approximate index (would need to traverse tree for exact count)
-    currentIndex.value = 0
-  }
+  // Index will be updated incrementally during navigation
 }
 
 function moveLeft() {
@@ -153,21 +165,34 @@ function moveLeft() {
 
   const direction = props.reverseMove ? 'next' : 'prev'
 
+  // If switching directions, skip one position to compensate for cursor position
+  if (lastDirection.value && lastDirection.value !== direction) {
+    if (direction === 'prev' && iterator.value.hasPrev()) {
+      iterator.value.prev() // Skip current position
+    } else if (direction === 'next' && iterator.value.hasNext()) {
+      iterator.value.next() // Skip current position
+    }
+  }
+
   if (direction === 'prev' && iterator.value.hasPrev()) {
     const prev = iterator.value.prev()
-    if (prev && prev !== currentMedia.value) {
+    if (prev) {
       currentMedia.value = prev
       currentMedia.value.path = iterator.value.getPath()
+      currentIndex.value = Math.max(0, currentIndex.value - 1)
+      lastDirection.value = direction
       preloadImages()
-      updateIndex()
+      checkAndLoadMore()
     }
   } else if (direction === 'next' && iterator.value.hasNext()) {
     const next = iterator.value.next()
-    if (next && next !== currentMedia.value) {
+    if (next) {
       currentMedia.value = next
       currentMedia.value.path = iterator.value.getPath()
+      currentIndex.value = Math.min(totalCount.value - 1, currentIndex.value + 1)
+      lastDirection.value = direction
       preloadImages()
-      updateIndex()
+      checkAndLoadMore()
     }
   }
 }
@@ -177,21 +202,46 @@ function moveRight() {
 
   const direction = props.reverseMove ? 'prev' : 'next'
 
+  // If switching directions, skip one position to compensate for cursor position
+  if (lastDirection.value && lastDirection.value !== direction) {
+    if (direction === 'next' && iterator.value.hasNext()) {
+      iterator.value.next() // Skip current position
+    } else if (direction === 'prev' && iterator.value.hasPrev()) {
+      iterator.value.prev() // Skip current position
+    }
+  }
+
   if (direction === 'next' && iterator.value.hasNext()) {
     const next = iterator.value.next()
-    if (next && next !== currentMedia.value) {
+    if (next) {
       currentMedia.value = next
       currentMedia.value.path = iterator.value.getPath()
+      currentIndex.value = Math.min(totalCount.value - 1, currentIndex.value + 1)
+      lastDirection.value = direction
       preloadImages()
-      updateIndex()
+      checkAndLoadMore()
     }
   } else if (direction === 'prev' && iterator.value.hasPrev()) {
     const prev = iterator.value.prev()
-    if (prev && prev !== currentMedia.value) {
+    if (prev) {
       currentMedia.value = prev
       currentMedia.value.path = iterator.value.getPath()
+      currentIndex.value = Math.max(0, currentIndex.value - 1)
+      lastDirection.value = direction
       preloadImages()
-      updateIndex()
+      checkAndLoadMore()
+    }
+  }
+}
+
+function checkAndLoadMore() {
+  // Trigger loading more images when we're within 10 images of a batch boundary
+  // Since gallery loads in batches of 64, trigger at 54, 118, etc.
+  if (props.onLoadMore && currentIndex.value > 0) {
+    const nextBatchThreshold = Math.floor(currentIndex.value / 64) * 64 + 54
+    if (currentIndex.value >= nextBatchThreshold && currentIndex.value < nextBatchThreshold + 20) {
+      console.log('FullsizeMedia: triggering loadMore at index', currentIndex.value)
+      props.onLoadMore()
     }
   }
 }

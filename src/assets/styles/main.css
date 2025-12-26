@@ -34,7 +34,7 @@
   }
 
   .media-item {
-    @apply relative inline-block m-1;
+    @apply relative inline-block;
   }
 
   .media-item-icon {

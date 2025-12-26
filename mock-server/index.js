@@ -104,7 +104,15 @@ app.get('/api/dirs/:year', (req, res) => {
     return res.status(404).json({ error: 'Year not found' })
   }
 
-  const media = generateMockMedia(year)
+  // Different counts per year
+  const yearCounts = {
+    '2024': 20,
+    '2023': 40,
+    '2022': 100,
+    '2021': 20
+  }
+
+  const media = generateMockMedia(year, yearCounts[year] || 20)
   res.json(media)
 })
 
@@ -259,7 +267,7 @@ app.listen(PORT, () => {
 ║  Mock User:   demo@example.com                            ║
 ║  Session:     In-memory (resets on restart)               ║
 ║                                                           ║
-║  📸 Media:    ${mockMediaYears.length} years of mock data                    ║
+║  📸 Media:    180 items across 4 years                    ║
 ║  🔐 Auth:     Automatic login on /api/auth/google         ║
 ║                                                           ║
 ║  ✨ Ready for frontend development!                       ║

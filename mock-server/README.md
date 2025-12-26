@@ -41,7 +41,7 @@ The mock server runs on `http://localhost:3000` and the Vue app proxies API requ
 
 ### Media
 - **Years**: 2021, 2022, 2023, 2024
-- **Photos per year**: ~20 images with realistic timestamps
+- **Total**: 180 items (2024: 20, 2023: 40, 2022: 100, 2021: 20)
 - **Mix**: 80% photos, 20% videos
 - **Images**: Placeholder images from Picsum Photos
 - **Videos**: Sample video (Big Buck Bunny)

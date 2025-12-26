@@ -33,23 +33,30 @@ export const useMediaStore = defineStore('media', () => {
       // Sort folders descending (newest first)
       yearFolders = yearFolders.filter(isNumber).sort((a, b) => parseInt(b) - parseInt(a))
 
-      // Load the first year's images to get initial data
-      let firstYearLoaded = false
+      // Load years until we have a minimum number of images (64) or run out of years
+      const minInitialImages = 64
+      let loadedYears = 0
+
       for (let i = 0; i < yearFolders.length; i++) {
         const folder = yearFolders[i]
         await loadImageList(folder)
+        loadedYears++
 
-        if (tree.value.getSize() > 0) {
-          firstYearLoaded = true
+        // Continue loading until we have enough images or loaded all years
+        if (tree.value.getSize() >= minInitialImages || i === yearFolders.length - 1) {
           isLoaded.value = true
 
-          // Load remaining years in background
-          loadRemainingYears(yearFolders.slice(i + 1))
+          // If there are remaining years, load them in background
+          if (i < yearFolders.length - 1) {
+            loadRemainingYears(yearFolders.slice(i + 1))
+          } else {
+            isFullyLoaded.value = true
+          }
           break
         }
       }
 
-      if (!firstYearLoaded) {
+      if (tree.value.getSize() === 0) {
         isLoaded.value = true
         isFullyLoaded.value = true
       }
