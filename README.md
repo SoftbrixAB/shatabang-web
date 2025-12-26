@@ -60,23 +60,49 @@ src/
 ### Prerequisites
 
 - **Node.js** 18 or higher
-- **Backend API** running (provides `/api`, `/media`, `/images`, `/video` endpoints)
+- **Backend API** (real or mock server)
 
 ### Setup
 
 ```bash
 # Install dependencies
 npm install
+```
 
-# Start development server (http://localhost:5173)
+### Option 1: With Mock Server (Easiest)
+
+Start both the mock API server and Vue app together:
+
+```bash
+npm run dev:mock
+```
+
+This will:
+- Start mock API server on `http://localhost:3000`
+- Start Vue dev server on `http://localhost:4200`
+- Auto-login as demo user
+- Provide 4 years of mock media data
+- Use placeholder images from Unsplash
+
+Perfect for **frontend development without backend dependencies**.
+
+See [mock-server/README.md](./mock-server/README.md) for details.
+
+### Option 2: With Real Backend
+
+```bash
+# Ensure backend is running on port 3000
+# Then start Vue app
 npm run dev
 ```
 
-The dev server includes:
+### Dev Server Features
+
 - Hot Module Replacement (HMR) for instant updates
-- API proxy to backend
+- API proxy to backend (port 3000)
 - Source maps for debugging
 - TypeScript type checking
+- Runs on `http://localhost:4200`
 
 ### Testing
 
