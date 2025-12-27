@@ -83,9 +83,6 @@ watch(() => props.fromDate, (newDate) => {
 <style scoped>
 .simple-gallery {
   width: 100%;
-  height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .gallery-grid {

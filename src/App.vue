@@ -4,7 +4,7 @@
     <NavigationBar v-if="showNavigation" />
 
     <!-- Main content -->
-    <main class="flex-1 overflow-auto">
+    <main class="flex-1 overflow-auto" id="main-content">
       <router-view />
     </main>
   </div>

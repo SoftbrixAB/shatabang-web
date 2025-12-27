@@ -7,6 +7,7 @@
     <div class="relative">
       <!-- Thumbnail image -->
       <img
+        ref="imgRef"
         :src="thumbnailUrl"
         :alt="media.fileName"
         class="w-full h-auto block"
@@ -28,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import type { Media } from '@/types/media'
 
 interface Props {
@@ -44,10 +45,49 @@ const emit = defineEmits<{
   click: [media: Media]
 }>()
 
+const imgRef = ref<HTMLImageElement | null>(null)
+const renderedWidth = ref<number>(200)
+
 const thumbnailUrl = computed(() => {
-  // Use thumbnail path from media object
-  return `./images/200/${props.media.img}`
+  // Choose image size based on actual rendered width in DOM
+  const width = renderedWidth.value
+
+  if (width <= 450) {
+    // Small thumbnails - use 300px images
+    return `./images/300/${props.media.img}`
+  } else if (width <= 1200) {
+    // Medium thumbnails - use 960px images
+    return `./images/960/${props.media.img}`
+  } else {
+    // Large thumbnails - use full size (1920px)
+    return props.media.bigMedia
+  }
 })
+
+const updateSize = () => {
+  if (imgRef.value) {
+    renderedWidth.value = imgRef.value.clientWidth
+  }
+}
+
+onMounted(() => {
+  // Initial measurement
+  updateSize()
+
+  // Update on window resize
+  window.addEventListener('resize', updateSize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateSize)
+})
+
+// Watch for zoom level changes (imageWidthStyle changes)
+watch(() => props.imageWidthStyle, async () => {
+  // Wait for DOM to update after style change
+  await nextTick()
+  updateSize()
+}, { deep: true })
 
 function handleClick() {
   emit('click', props.media)

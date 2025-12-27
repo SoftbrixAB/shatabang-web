@@ -63,23 +63,31 @@ export function useInfiniteScroll<T>(
       return
     }
 
-    const containerHeight = galleryContainer.clientHeight
-    const contentHeight = galleryContainer.scrollHeight
-    const scrollbarVisible = contentHeight > containerHeight
+    const windowHeight = window.innerHeight
+    const documentHeight = document.documentElement.scrollHeight
 
-    // Only auto-load more if the gallery is not yet scrollable
-    // Once scrollable, wait for user to scroll
-    // Reduced threshold to 50px - if content is 50px taller than container, it's scrollable enough
-    const isPageScrollable = contentHeight > containerHeight + 50
+    // Get the gallery's position and height to determine if it fills the viewport
+    const galleryRect = galleryContainer.getBoundingClientRect()
+    const galleryHeight = galleryContainer.scrollHeight
+    const galleryTop = galleryRect.top
 
-    console.log('checkIfNeedMore: containerHeight:', containerHeight, 'contentHeight:', contentHeight, 'scrollbarVisible:', scrollbarVisible, 'isPageScrollable:', isPageScrollable, 'items:', items.value.length)
+    // Calculate if the gallery content extends beyond the viewport
+    // galleryTop is relative to viewport, so galleryTop + galleryHeight tells us where gallery ends
+    const galleryBottomInViewport = galleryTop + galleryHeight
+    const availableSpace = windowHeight
+
+    // Only auto-load more if the gallery doesn't extend past the viewport
+    // Once it extends past viewport by 50px, it's scrollable enough
+    const isPageScrollable = galleryBottomInViewport > availableSpace + 50
+
+    console.log('checkIfNeedMore: windowHeight:', windowHeight, 'documentHeight:', documentHeight, 'galleryHeight:', galleryHeight, 'galleryTop:', galleryTop, 'galleryBottomInViewport:', galleryBottomInViewport, 'isPageScrollable:', isPageScrollable, 'items:', items.value.length)
 
     if (!isPageScrollable && hasMore.value && !loading.value) {
-      // Gallery still fits in container, load more to make it scrollable
-      console.log('checkIfNeedMore: Gallery not scrollable, loading more')
+      // Page still fits in window, load more to make it scrollable
+      console.log('checkIfNeedMore: Page not scrollable, loading more')
       loadMore()
     } else {
-      console.log('checkIfNeedMore: Gallery is scrollable, waiting for user scroll')
+      console.log('checkIfNeedMore: Page is scrollable, waiting for user scroll')
     }
   }
 
