@@ -122,6 +122,7 @@ export function useInfiniteScroll<T>(
     items,
     hasMore,
     loading,
-    loadMore
+    loadMore,
+    checkIfNeedMore
   }
 }

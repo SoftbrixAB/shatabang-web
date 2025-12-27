@@ -1,6 +1,6 @@
 <template>
   <div
-    class="media-item cursor-pointer transition-transform hover:scale-105"
+    class="media-item cursor-pointer hover:bg-gray-700 transition-colors"
     :style="imageWidthStyle"
     @click="handleClick"
   >

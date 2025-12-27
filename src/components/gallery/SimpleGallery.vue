@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import MediaGalleryItem from './MediaGalleryItem.vue'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import { useMediaStore } from '@/stores/mediaStore'
@@ -54,7 +54,7 @@ const mediaStore = useMediaStore()
 const iterator = ref(mediaStore.getIteratorReverse())
 
 // Use infinite scroll composable
-const { items, hasMore, loading, loadMore } = useInfiniteScroll<Media>(iterator.value, {
+const { items, hasMore, loading, loadMore, checkIfNeedMore } = useInfiniteScroll<Media>(iterator.value, {
   batchSize: 64,
   threshold: 300
 })
@@ -69,6 +69,16 @@ defineExpose({
 function handleMediaClick(media: Media, galleryIndex: number) {
   emit('mediaClick', media, galleryIndex)
 }
+
+// Watch for zoom level changes (imageWidthStyle) to check if more items needed
+watch(() => props.imageWidthStyle, async () => {
+  // Wait for DOM to update with new image sizes
+  await nextTick()
+  // Small delay to let images resize
+  setTimeout(() => {
+    checkIfNeedMore()
+  }, 100)
+}, { deep: true })
 
 // Watch for fromDate changes to restart iterator
 watch(() => props.fromDate, (newDate) => {

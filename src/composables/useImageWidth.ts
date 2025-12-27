@@ -13,14 +13,17 @@ export function useImageWidth() {
 
   function zoomIn() {
     // Zoom in = make images bigger = decrease imagesPWidth
-    // Allow zooming in down to 0.0625 (1600% width)
-    if (imagesPWidth.value > 0.0625) {
+    // Allow zooming in down to 1 (100% width)
+    if (imagesPWidth.value > 1) {
       imagesPWidth.value = imagesPWidth.value / 2
     }
   }
 
   function zoomOut() {
-    if (imagesPWidth.value < 16) {
+    // Zoom out = make images smaller = increase imagesPWidth
+    // Allow zooming out to 33.33 (3% width)
+    const maxZoomOut = 100 / 3 // ~33.33
+    if (imagesPWidth.value < maxZoomOut) {
       imagesPWidth.value = imagesPWidth.value * 2
     }
   }
