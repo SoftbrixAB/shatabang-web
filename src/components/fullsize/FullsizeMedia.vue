@@ -15,7 +15,7 @@
         <div class="flex-1">
           <p class="text-lg font-semibold truncate">{{ currentMedia.fileName }}</p>
           <p class="text-sm text-gray-300">
-            {{ currentIndex + 1 }} / {{ totalCount }}
+            {{ displayIndex }} / {{ totalCount }}
           </p>
         </div>
         <button
@@ -83,12 +83,14 @@ import FullsizeVideo from './FullsizeVideo.vue'
 
 interface Props {
   activeMedia?: Media
+  initialIndex?: number
   reverseMove?: boolean
   onLoadMore?: () => void
 }
 
 const props = withDefaults(defineProps<Props>(), {
   activeMedia: undefined,
+  initialIndex: 0,
   reverseMove: false,
   onLoadMore: undefined
 })
@@ -106,9 +108,11 @@ const hideInteractiveOverlay = ref(false)
 const currentIndex = ref(0)
 const totalCount = computed(() => mediaStore.mediaCount)
 const lastDirection = ref<'next' | 'prev' | null>(null)
+const originalUrl = ref<string>('')
 
 const hasPrev = computed(() => iterator.value?.hasPrev() ?? false)
 const hasNext = computed(() => iterator.value?.hasNext() ?? false)
+const displayIndex = computed(() => currentIndex.value + 1) // 1-indexed for display
 
 // Set up keyboard navigation
 useKeyboardNav({
@@ -120,28 +124,21 @@ useKeyboardNav({
 
 // Watch for activeMedia changes
 watch(() => props.activeMedia, (media) => {
-  console.log('FullsizeMedia: activeMedia changed to:', media)
   if (media) {
     if (!iterator.value) {
+      // Save original URL to restore when closing
+      originalUrl.value = window.location.href
+
       // Initialize iterator
       iterator.value = mediaStore.getIterator()
-      console.log('FullsizeMedia: iterator initialized, media.path:', media.path)
       if (media.path) {
         iterator.value.gotoPath(media.path)
       }
       currentMedia.value = media
-      console.log('FullsizeMedia: currentMedia set to:', currentMedia.value)
 
-      // Calculate approximate index based on date (newer = lower index since newest first)
-      // This is a rough estimate, will be updated incrementally during navigation
-      const totalItems = mediaStore.mediaCount
-      const mediaDate = new Date(media.date)
-      const now = new Date()
-      const oldestDate = new Date(now.getFullYear() - 10, 0, 1) // Assume 10 years of photos
-      const dateRange = now.getTime() - oldestDate.getTime()
-      const itemAge = now.getTime() - mediaDate.getTime()
-      currentIndex.value = Math.floor((itemAge / dateRange) * totalItems)
-      currentIndex.value = Math.max(0, Math.min(totalItems - 1, currentIndex.value))
+      // Set initial index from gallery position
+      // Gallery passes the index (0-based), displayed as index + 1
+      currentIndex.value = props.initialIndex
 
       // Update history (pass null as state since media object is not serializable)
       history.pushState(null, '', `#view=${media.bigMedia}`)
@@ -240,7 +237,6 @@ function checkAndLoadMore() {
   if (props.onLoadMore && currentIndex.value > 0) {
     const nextBatchThreshold = Math.floor(currentIndex.value / 64) * 64 + 54
     if (currentIndex.value >= nextBatchThreshold && currentIndex.value < nextBatchThreshold + 20) {
-      console.log('FullsizeMedia: triggering loadMore at index', currentIndex.value)
       props.onLoadMore()
     }
   }
@@ -286,13 +282,14 @@ function close() {
     closeFullscreen()
   }
 
+  // Restore original URL
+  if (originalUrl.value) {
+    history.replaceState(null, '', originalUrl.value)
+    originalUrl.value = ''
+  }
+
   currentMedia.value = null
   iterator.value = null
-
-  // Go back in history
-  if (window.history.state) {
-    window.history.back()
-  }
 
   emit('close')
 }

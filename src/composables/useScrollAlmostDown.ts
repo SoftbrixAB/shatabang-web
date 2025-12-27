@@ -1,13 +1,18 @@
 import { onMounted, onUnmounted } from 'vue'
 
-export function useScrollAlmostDown(callback: () => void, threshold: number = 300) {
+export function useScrollAlmostDown(callback: () => void, threshold: number = 300, containerId: string = 'gallery-container') {
   function checkScroll() {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-    const windowHeight = window.innerHeight
-    const documentHeight = document.documentElement.scrollHeight
+    const container = document.getElementById(containerId)
+    if (!container) {
+      return
+    }
+
+    const scrollTop = container.scrollTop
+    const containerHeight = container.clientHeight
+    const scrollHeight = container.scrollHeight
 
     // Check if we're close to the bottom
-    const distanceFromBottom = documentHeight - (scrollTop + windowHeight)
+    const distanceFromBottom = scrollHeight - (scrollTop + containerHeight)
 
     if (distanceFromBottom < threshold) {
       callback()
@@ -28,13 +33,17 @@ export function useScrollAlmostDown(callback: () => void, threshold: number = 30
   }
 
   onMounted(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    // Check immediately on mount
-    checkScroll()
+    const container = document.getElementById(containerId)
+    if (container) {
+      container.addEventListener('scroll', handleScroll, { passive: true })
+    }
   })
 
   onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll)
+    const container = document.getElementById(containerId)
+    if (container) {
+      container.removeEventListener('scroll', handleScroll)
+    }
     if (rafId !== null) {
       window.cancelAnimationFrame(rafId)
     }

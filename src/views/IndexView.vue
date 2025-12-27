@@ -42,6 +42,7 @@
     <!-- Fullscreen viewer -->
     <FullsizeMedia
       :active-media="activeMedia"
+      :initial-index="initialIndex"
       :on-load-more="handleLoadMore"
       @close="closeFullscreen"
     />
@@ -59,13 +60,14 @@ import type { Media } from '@/types/media'
 const mediaStore = useMediaStore()
 const imageWidth = useImageWidth()
 const activeMedia = ref<Media | undefined>(undefined)
+const initialIndex = ref<number>(0)
 const galleryRef = ref<InstanceType<typeof SimpleGallery> | null>(null)
 
 const { zoomIn, zoomOut } = imageWidth
 
-function handleMediaClick(media: Media) {
-  console.log('Media clicked:', media)
+function handleMediaClick(media: Media, galleryIndex: number) {
   activeMedia.value = media
+  initialIndex.value = galleryIndex
 }
 
 function closeFullscreen() {
@@ -74,7 +76,6 @@ function closeFullscreen() {
 
 function handleLoadMore() {
   if (galleryRef.value) {
-    console.log('IndexView: triggering loadMore on gallery')
     galleryRef.value.loadMore()
   }
 }

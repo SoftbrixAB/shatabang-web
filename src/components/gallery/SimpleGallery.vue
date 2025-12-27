@@ -1,5 +1,5 @@
 <template>
-  <div class="simple-gallery">
+  <div id="gallery-container" class="simple-gallery">
     <!-- Media items -->
     <div class="gallery-grid">
       <MediaGalleryItem
@@ -7,7 +7,7 @@
         :key="media.fileName + '-' + index"
         :media="media"
         :image-width-style="imageWidthStyle"
-        @click="handleMediaClick"
+        @click="handleMediaClick(media, index)"
       />
     </div>
 
@@ -47,7 +47,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  mediaClick: [media: Media]
+  mediaClick: [media: Media, galleryIndex: number]
 }>()
 
 const mediaStore = useMediaStore()
@@ -66,9 +66,8 @@ defineExpose({
 })
 
 // Handle media click
-function handleMediaClick(media: Media) {
-  console.log('SimpleGallery: media clicked, emitting mediaClick:', media)
-  emit('mediaClick', media)
+function handleMediaClick(media: Media, galleryIndex: number) {
+  emit('mediaClick', media, galleryIndex)
 }
 
 // Watch for fromDate changes to restart iterator
@@ -84,6 +83,9 @@ watch(() => props.fromDate, (newDate) => {
 <style scoped>
 .simple-gallery {
   width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .gallery-grid {

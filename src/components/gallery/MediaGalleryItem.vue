@@ -50,7 +50,6 @@ const thumbnailUrl = computed(() => {
 })
 
 function handleClick() {
-  console.log('MediaGalleryItem: clicked, emitting:', props.media)
   emit('click', props.media)
 }
 </script>
