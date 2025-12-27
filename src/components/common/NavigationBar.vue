@@ -18,13 +18,6 @@
               Gallery
             </router-link>
             <router-link
-              to="/calendar"
-              class="nav-link"
-              :class="{ 'active': $route.name === 'calendar' }"
-            >
-              Calendar
-            </router-link>
-            <router-link
               to="/upload"
               class="nav-link"
               :class="{ 'active': $route.name === 'upload' }"
@@ -53,13 +46,6 @@
           :class="{ 'active': $route.name === 'index' }"
         >
           Gallery
-        </router-link>
-        <router-link
-          to="/calendar"
-          class="nav-link-mobile"
-          :class="{ 'active': $route.name === 'calendar' }"
-        >
-          Calendar
         </router-link>
         <router-link
           to="/upload"

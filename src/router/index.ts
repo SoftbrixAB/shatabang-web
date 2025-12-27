@@ -11,13 +11,6 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Gallery' }
   },
   {
-    path: '/calendar',
-    name: 'calendar',
-    component: () => import('../views/CalendarView.vue'),
-    beforeEnter: authGuard,
-    meta: { title: 'Calendar' }
-  },
-  {
     path: '/upload',
     name: 'upload',
     component: () => import('../views/UploadView.vue'),
