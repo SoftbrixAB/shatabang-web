@@ -51,7 +51,8 @@ The mock server runs on `http://localhost:3000` and the Vue app proxies API requ
 ### Authentication
 - `GET /api/auth/google` - Auto-login (redirects back to app)
 - `GET /api/users/me` - Get current user (requires session)
-- `POST /api/auth/logout` - Clear session
+- `POST /api/auth/logout` - Clear session (legacy)
+- `POST /api/users/invalidate` - Invalidate session (used by Vue app)
 
 ### Media
 - `GET /api/dirs/list` - List available years

@@ -34,9 +34,9 @@
     </template>
 
     <!-- Loading indicator -->
-    <div v-if="loading" class="text-center py-8">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-      <p class="text-gray-600 mt-2">Loading more media...</p>
+    <div v-if="loading" class="loading-indicator">
+      <div class="spinner"></div>
+      <p class="text-gray-700 mt-3 font-medium">Loading more images...</p>
     </div>
 
     <!-- End of gallery indicator -->
@@ -193,5 +193,29 @@ watch(() => props.fromDate, (newDate) => {
   line-height: 0;
   width: 100%;
   margin-bottom: 16px;
+}
+
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+  min-height: 120px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

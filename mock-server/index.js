@@ -75,10 +75,26 @@ app.get('/api/users/me', (req, res) => {
   }
 })
 
-// Logout
+// Logout (old endpoint for compatibility)
 app.post('/api/auth/logout', (req, res) => {
   req.session.destroy()
   res.json({ message: 'Logged out' })
+})
+
+// Invalidate session (used by Vue app)
+app.post('/api/users/invalidate', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Session destroy error:', err)
+      return res.status(500).json({ error: 'Failed to logout' })
+    }
+
+    // Clear the session cookie
+    res.clearCookie('connect.sid', { path: '/' })
+
+    console.log('Session invalidated successfully')
+    res.json({ message: 'Session invalidated' })
+  })
 })
 
 // ====================

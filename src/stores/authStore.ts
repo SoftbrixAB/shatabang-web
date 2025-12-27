@@ -48,8 +48,8 @@ export const useAuthStore = defineStore('auth', () => {
       await api.post('/api/users/invalidate')
       user.value = null
 
-      // Redirect to login
-      window.location.href = '/'
+      // Redirect to login page
+      window.location.href = '/#/login'
     } catch (err) {
       console.error('Failed to logout:', err)
       error.value = err instanceof Error ? err.message : 'Failed to logout'
